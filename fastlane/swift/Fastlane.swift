@@ -76,7 +76,7 @@ public func addGitTag(tag: String? = nil,
                       grouping: String = "builds",
                       prefix: String = "",
                       postfix: String = "",
-                      buildNumber: Any,
+                      buildNumber: Any? = nil,
                       message: String? = nil,
                       commit: String? = nil,
                       force: Bool = false,
@@ -1861,7 +1861,7 @@ public func carthage(command: String = "bootstrap",
    - filename: The filename of certificate to store
    - outputPath: The path to a directory in which all certificates and private keys should be stored
    - keychainPath: Path to a custom keychain
-   - keychainPassword: This might be required the first time you access certificates on a new mac. For the login/default keychain this is your account password
+   - keychainPassword: This might be required the first time you access certificates on a new mac. For the login/default keychain this is your macOS account password
    - skipSetPartitionList: Skips setting the partition list (which can sometimes take a long time). Setting the partition list is usually needed to prevent Xcode from prompting to allow a cert to be used for signing
    - platform: Set the provisioning profile's platform (ios, macos)
 
@@ -3349,7 +3349,7 @@ public func getBuildNumberRepository(useHgRevisionNumber: Bool = false) {
    - filename: The filename of certificate to store
    - outputPath: The path to a directory in which all certificates and private keys should be stored
    - keychainPath: Path to a custom keychain
-   - keychainPassword: This might be required the first time you access certificates on a new mac. For the login/default keychain this is your account password
+   - keychainPassword: This might be required the first time you access certificates on a new mac. For the login/default keychain this is your macOS account password
    - skipSetPartitionList: Skips setting the partition list (which can sometimes take a long time). Setting the partition list is usually needed to prevent Xcode from prompting to allow a cert to be used for signing
    - platform: Set the provisioning profile's platform (ios, macos)
 
@@ -4743,7 +4743,7 @@ public func makeChangelogFromJenkins(fallbackChangelog: String = "",
  Alias for the `sync_code_signing` action
 
  - parameters:
-   - type: Define the profile type, can be appstore, adhoc, development, enterprise, developer_id
+   - type: Define the profile type, can be appstore, adhoc, development, enterprise, developer_id, mac_installer_distribution
    - additionalCertTypes: Create additional cert types needed for macOS installers (valid values: mac_installer_distribution, developer_id_installer)
    - readonly: Only fetch existing certificates and profiles, don't generate new ones
    - generateAppleCerts: Create a certificate type for Xcode 11 and later (Apple Development or Apple Distribution)
@@ -4773,7 +4773,7 @@ public func makeChangelogFromJenkins(fallbackChangelog: String = "",
    - s3Bucket: Name of the S3 bucket
    - s3ObjectPrefix: Prefix to be used on all objects uploaded to S3
    - keychainName: Keychain the items should be imported to
-   - keychainPassword: This might be required the first time you access certificates on a new mac. For the login/default keychain this is your account password
+   - keychainPassword: This might be required the first time you access certificates on a new mac. For the login/default keychain this is your macOS account password
    - force: Renew the provisioning profiles every time you run match
    - forceForNewDevices: Renew the provisioning profiles if the device count on the developer portal has changed. Ignored for profile type 'appstore'
    - skipConfirmation: Disables confirmation prompts during nuke, answering them with yes
@@ -7125,7 +7125,7 @@ public func slather(buildDirectory: String? = nil,
                     ignore: [String]? = nil,
                     verbose: Bool? = nil,
                     useBundleExec: Bool = false,
-                    binaryBasename: Bool = false,
+                    binaryBasename: [String]? = nil,
                     binaryFile: [String]? = nil,
                     arch: String? = nil,
                     sourceFiles: Bool = false,
@@ -7445,6 +7445,7 @@ public func splunkmint(dsym: String? = nil,
 
  - parameters:
    - command: The swift command (one of: build, test, clean, reset, update, resolve, generate-xcodeproj, init)
+   - enableCodeCoverage: Enables code coverage for the generated Xcode project when using the generate-xcodeproj command
    - buildPath: Specify build/cache directory [default: ./.build]
    - packagePath: Change working directory before any other operation
    - xcconfig: Use xcconfig file to override swift package generate-xcodeproj defaults
@@ -7455,6 +7456,7 @@ public func splunkmint(dsym: String? = nil,
    - verbose: Increase verbosity of informational output
  */
 public func spm(command: String = "build",
+                enableCodeCoverage: Any? = nil,
                 buildPath: String? = nil,
                 packagePath: String? = nil,
                 xcconfig: String? = nil,
@@ -7465,6 +7467,7 @@ public func spm(command: String = "build",
                 verbose: Bool = false)
 {
     let command = RubyCommand(commandID: "", methodName: "spm", className: nil, args: [RubyCommand.Argument(name: "command", value: command),
+                                                                                       RubyCommand.Argument(name: "enable_code_coverage", value: enableCodeCoverage),
                                                                                        RubyCommand.Argument(name: "build_path", value: buildPath),
                                                                                        RubyCommand.Argument(name: "package_path", value: packagePath),
                                                                                        RubyCommand.Argument(name: "xcconfig", value: xcconfig),
@@ -7514,7 +7517,7 @@ public func ssh(username: String,
    - versionCode: Version code (used when updating rollout or promoting specific versions)
    - releaseStatus: Release status (used when uploading new apks/aabs) - valid values are completed, draft, halted, inProgress
    - track: The track of the application to use. The default available tracks are: production, beta, alpha, internal
-   - rollout: The percentage of the user fraction when uploading to the rollout track
+   - rollout: The percentage of the user fraction when uploading to the rollout track (setting to 1 will complete the rollout)
    - metadataPath: Path to the directory containing the metadata files
    - key: **DEPRECATED!** Use `--json_key` instead - The p12 File used to authenticate with Google
    - issuer: **DEPRECATED!** Use `--json_key` instead - The issuer of the p12 file (email address of the service account)
@@ -7679,7 +7682,7 @@ public func swiftlint(mode: Any = "lint",
  Easily sync your certificates and profiles across your team (via _match_)
 
  - parameters:
-   - type: Define the profile type, can be appstore, adhoc, development, enterprise, developer_id
+   - type: Define the profile type, can be appstore, adhoc, development, enterprise, developer_id, mac_installer_distribution
    - additionalCertTypes: Create additional cert types needed for macOS installers (valid values: mac_installer_distribution, developer_id_installer)
    - readonly: Only fetch existing certificates and profiles, don't generate new ones
    - generateAppleCerts: Create a certificate type for Xcode 11 and later (Apple Development or Apple Distribution)
@@ -7709,7 +7712,7 @@ public func swiftlint(mode: Any = "lint",
    - s3Bucket: Name of the S3 bucket
    - s3ObjectPrefix: Prefix to be used on all objects uploaded to S3
    - keychainName: Keychain the items should be imported to
-   - keychainPassword: This might be required the first time you access certificates on a new mac. For the login/default keychain this is your account password
+   - keychainPassword: This might be required the first time you access certificates on a new mac. For the login/default keychain this is your macOS account password
    - force: Renew the provisioning profiles every time you run match
    - forceForNewDevices: Renew the provisioning profiles if the device count on the developer portal has changed. Ignored for profile type 'appstore'
    - skipConfirmation: Disables confirmation prompts during nuke, answering them with yes
@@ -8689,7 +8692,7 @@ public func uploadToAppStore(apiKeyPath: String? = nil,
    - versionCode: Version code (used when updating rollout or promoting specific versions)
    - releaseStatus: Release status (used when uploading new apks/aabs) - valid values are completed, draft, halted, inProgress
    - track: The track of the application to use. The default available tracks are: production, beta, alpha, internal
-   - rollout: The percentage of the user fraction when uploading to the rollout track
+   - rollout: The percentage of the user fraction when uploading to the rollout track (setting to 1 will complete the rollout)
    - metadataPath: Path to the directory containing the metadata files
    - key: **DEPRECATED!** Use `--json_key` instead - The p12 File used to authenticate with Google
    - issuer: **DEPRECATED!** Use `--json_key` instead - The issuer of the p12 file (email address of the service account)
@@ -9259,7 +9262,7 @@ public func xcov(workspace: String? = nil,
                  coverallsServiceJobId: String? = nil,
                  coverallsRepoToken: String? = nil,
                  xcconfig: String? = nil,
-                 ideFoundationPath: String = "/Applications/Xcode-12.0.1.app/Contents/Developer/../Frameworks/IDEFoundation.framework/Versions/A/IDEFoundation",
+                 ideFoundationPath: String = "/Applications/Xcode-11.7.app/Contents/Developer/../Frameworks/IDEFoundation.framework/Versions/A/IDEFoundation",
                  legacySupport: Bool = false)
 {
     let command = RubyCommand(commandID: "", methodName: "xcov", className: nil, args: [RubyCommand.Argument(name: "workspace", value: workspace),
@@ -9405,4 +9408,4 @@ public let snapshotfile = Snapshotfile()
 
 // Please don't remove the lines below
 // They are used to detect outdated files
-// FastlaneRunnerAPIVersion [0.9.102]
+// FastlaneRunnerAPIVersion [0.9.104]
