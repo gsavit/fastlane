@@ -18,6 +18,7 @@ module Spaceship
       attr_accessor :beta_app_review_submission
       attr_accessor :beta_build_metrics
       attr_accessor :beta_build_localizations
+      attr_accessor :beta_groups
       attr_accessor :build_beta_detail
       attr_accessor :pre_release_version
       attr_accessor :individual_testers
@@ -36,6 +37,7 @@ module Spaceship
         "betaAppReviewSubmission" => "beta_app_review_submission",
         "betaBuildMetrics" => "beta_build_metrics",
         "betaBuildLocalizations" => "beta_build_localizations",
+        "betaGroups" => "beta_groups",
         "buildBetaDetail" => "build_beta_detail",
         "preReleaseVersion" => "pre_release_version",
         "individualTesters" => "individual_testers"
